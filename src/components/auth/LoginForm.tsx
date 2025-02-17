@@ -2,18 +2,24 @@ import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
 
-export default function LoginForm() {
+interface LoginFormProps {
+  onClose: () => void;
+}
+
+export default function LoginForm({ onClose }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
       await signIn(email, password);
-      toast.success('Logged in successfully');
+      toast.success(`Welcome back, ${email}!`);
+      onClose(); // ✅ Login hone ke baad modal close karo
     } catch (error) {
-      toast.error('Failed to log in');
+      toast.error('Login failed');
     }
   };
 
@@ -51,7 +57,7 @@ export default function LoginForm() {
         type="submit"
         className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       >
-        Log in
+        Login
       </button>
     </form>
   );

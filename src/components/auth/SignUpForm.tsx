@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
 
-export default function SignUpForm() {
+interface SignUpFormProps {
+  onClose: () => void;
+}
+
+export default function SignUpForm({ onClose }: SignUpFormProps) {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,15 +21,30 @@ export default function SignUpForm() {
     }
 
     try {
-      await signUp(email, password);
-      toast.success('Account created successfully');
+      await signUp(name, email, password);
+      toast.success(`Welcome, ${name}!`);
+      onClose(); // ✅ Signup hone ke baad modal close karo
     } catch (error) {
-      toast.error('Failed to create account');
+      toast.error('Signup failed');
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          Name
+        </label>
+        <input
+          id="name"
+          type="text"
+          required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+        />
+      </div>
+
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
           Email

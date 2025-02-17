@@ -1,17 +1,15 @@
-import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
 
-export async function scheduleNotification(appointmentId: string, appointmentDate: Date) {
+export async function scheduleNotification(appointmentId: string, appointmentDate: Date, token: string) {
   // Schedule notification 24 hours before appointment
   const notificationTime = new Date(appointmentDate);
   notificationTime.setHours(notificationTime.getHours() - 24);
 
   try {
-    await supabase
-      .from('appointments')
-      .update({ 
-        notification_scheduled_for: notificationTime.toISOString() 
-      })
-      .eq('id', appointmentId);
+    // Update appointment with notification schedule
+    await api.appointments.updateNotification(appointmentId, {
+      notificationScheduledFor: notificationTime.toISOString()
+    }, token);
 
     // Request notification permission
     if ('Notification' in window) {

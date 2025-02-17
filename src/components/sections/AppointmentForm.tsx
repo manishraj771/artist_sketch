@@ -17,13 +17,28 @@ export default function AppointmentForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Token being sent:", token); // 🔥 Debugging step
+
     if (!token) {
       toast.error('Please log in to book an appointment');
       return;
     }
 
+    const appointmentData = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      date: new Date(formData.date).toISOString(), // ✅ Ensure ISO format
+      time: formData.time,
+      message: formData.message.trim()
+    };
+
+    console.log("Final Appointment Data:", appointmentData); // 🔥 Debugging step
+
     try {
-      await api.appointments.create(formData, token);
+      const response = await api.appointments.create(appointmentData, token);
+      console.log("API Response:", response); // 🔥 Debugging step
+
       toast.success('Appointment request submitted successfully!');
       setFormData({
         name: '',
@@ -34,6 +49,7 @@ export default function AppointmentForm() {
         message: ''
       });
     } catch (error) {
+      console.error("Error Submitting Appointment:", error); // 🔥 Debugging step
       toast.error('Failed to submit appointment request');
     }
   };
@@ -46,23 +62,7 @@ export default function AppointmentForm() {
             <div className="relative z-10">
               <h3 className="text-2xl font-bold mb-4">Book an Appointment</h3>
               <p className="mb-6 opacity-90">Schedule a consultation to discuss your custom sketch requirements.</p>
-              
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3 transform transition-transform duration-300 hover:translate-x-2">
-                  <div className="p-2 bg-white/10 rounded-lg">
-                    <Calendar className="h-5 w-5" />
-                  </div>
-                  <span>Available Monday - Saturday</span>
-                </div>
-                <div className="flex items-center space-x-3 transform transition-transform duration-300 hover:translate-x-2">
-                  <div className="p-2 bg-white/10 rounded-lg">
-                    <Clock className="h-5 w-5" />
-                  </div>
-                  <span>10:00 AM - 6:00 PM</span>
-                </div>
-              </div>
             </div>
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/50 to-indigo-800/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
 
           <div className="md:w-1/2 p-8">
@@ -74,7 +74,7 @@ export default function AppointmentForm() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300"
                   placeholder="Your name"
                 />
               </div>
@@ -86,7 +86,7 @@ export default function AppointmentForm() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300"
                   placeholder="your@email.com"
                 />
               </div>
@@ -98,7 +98,7 @@ export default function AppointmentForm() {
                   required
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300"
                   placeholder="Your phone number"
                 />
               </div>
@@ -111,7 +111,7 @@ export default function AppointmentForm() {
                     required
                     value={formData.date}
                     onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300"
                   />
                 </div>
 
@@ -122,26 +122,12 @@ export default function AppointmentForm() {
                     required
                     value={formData.time}
                     onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value }))}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300"
                   />
                 </div>
               </div>
 
-              <div className="group">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                <textarea
-                  value={formData.message}
-                  onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300"
-                  rows={3}
-                  placeholder="Tell us about your requirements..."
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-lg flex items-center justify-center space-x-2"
-              >
+              <button type="submit" className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg">
                 <Send className="h-5 w-5" />
                 <span>Book Appointment</span>
               </button>

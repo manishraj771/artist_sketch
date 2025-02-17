@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Palette, User, LogOut, Settings, ChevronDown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -12,6 +12,9 @@ export default function Header() {
   const { user, signOut } = useAuth();
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
+
+  // ✅ Header will automatically update when `user` changes
+  useEffect(() => {}, [user]);
 
   const handleAdminClick = () => {
     if (isAdmin) {
@@ -34,11 +37,13 @@ export default function Header() {
     <header className="bg-white shadow-sm fixed w-full top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
+          {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <Palette className="h-8 w-8 text-indigo-600" />
             <h1 className="text-2xl font-bold text-gray-900">ArtisticSketches</h1>
           </Link>
           
+          {/* Navigation */}
           <nav className="flex items-center space-x-8">
             {user ? (
               <div className="relative">
@@ -47,11 +52,13 @@ export default function Header() {
                   className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100"
                 >
                   <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
-                    {user.email?.[0].toUpperCase()}
+                    {user.name?.charAt(0).toUpperCase()} {/* Show first letter of name */}
                   </div>
+                  <span className="font-medium">{user.name}</span>
                   <ChevronDown className="h-4 w-4 text-gray-600" />
                 </button>
 
+                {/* Dropdown Menu */}
                 {showDropdown && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
                     {isAdmin && (
@@ -86,6 +93,7 @@ export default function Header() {
         </div>
       </div>
 
+      {/* Auth Modal */}
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
     </header>
   );

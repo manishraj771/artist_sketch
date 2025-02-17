@@ -6,6 +6,8 @@ import HomePage from './pages/HomePage';
 import SketchDetailsPage from './pages/SketchDetailsPage';
 import AdminPage from './pages/AdminPage';
 import AdminRoute from './components/AdminRoute';
+import MyAppointments from './pages/MyAppointments';
+
 
 export default function App() {
   return (
@@ -15,6 +17,8 @@ export default function App() {
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/my-appointments" element={<MyAppointments />} />
+
           <Route path="/sketch/:id" element={<SketchDetailsPage />} />
           <Route 
             path="/admin" 
